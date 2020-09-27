@@ -19,7 +19,7 @@ export default class Header extends React.Component {
       <header>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <a className="navbar-brand" href="https://1up.health/dev">
-            1upHealth
+            ABCD Donate Data
           </a>
           <button
             className="navbar-toggler"
@@ -35,40 +35,40 @@ export default class Header extends React.Component {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               {typeof this.props.user === 'undefined' ||
-              this.props.user.email === 'null' ? (
-                ''
-              ) : (
-                <li className="nav-item">
-                  <a className="nav-link">
-                    <Link href="/">Connect Data</Link>&nbsp;{' '}
-                    <span className="sr-only">(current)</span>
-                  </a>
-                </li>
-              )}
+                this.props.user.email === 'null' ? (
+                  ''
+                ) : (
+                  <li className="nav-item">
+                    <a className="nav-link">
+                      <Link href="/">Connect Data</Link>&nbsp;{' '}
+                      <span className="sr-only">(current)</span>
+                    </a>
+                  </li>
+                )}
               {typeof this.props.user === 'undefined' ||
-              this.props.user.email === 'null' ? (
-                <a className="nav-link" href="">
-                  <Link href="/login">Login</Link>
-                </a>
-              ) : (
-                <li className="nav-item">
+                this.props.user.email === 'null' ? (
                   <a className="nav-link" href="">
-                    <Link href="/logout" onClick={logout}>
-                      Logout
+                    <Link href="/login">Login</Link>
+                  </a>
+                ) : (
+                  <li className="nav-item">
+                    <a className="nav-link" href="">
+                      <Link href="/logout" onClick={logout}>
+                        Logout
                     </Link>
-                  </a>
-                </li>
-              )}
+                    </a>
+                  </li>
+                )}
               {typeof this.props.user === 'undefined' ||
-              this.props.user.email === 'null' ? (
-                ''
-              ) : (
-                <li className="nav-item">
-                  <a className="nav-link" href="">
-                    <Link href="/dashboard">{this.props.user.email}</Link>
-                  </a>
-                </li>
-              )}
+                this.props.user.email === 'null' ? (
+                  ''
+                ) : (
+                  <li className="nav-item">
+                    <a className="nav-link" href="">
+                      <Link href="/dashboard">{this.props.user.email}</Link>
+                    </a>
+                  </li>
+                )}
               <li className="nav-item">
                 <a className="nav-link" href="">
                   <Link href="/test">Test Data</Link>&nbsp;{' '}

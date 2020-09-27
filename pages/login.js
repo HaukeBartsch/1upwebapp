@@ -38,12 +38,13 @@ export default class Login extends React.Component {
       <div className="container">
         <div className="jumbotron bg-light">
           <h1>
-            Welcome to the <a href="https://1up.health">1upHealth</a> Demo App.
+            Welcome to the <a href="https://localhost:3000">ABCD Donate Your Data</a> Demo App.
           </h1>
           <p>
-            You can sign in, connect your health systems, and view your medical
-            record. Learn more about the tech behind this app in the{' '}
-            <a href="https://github.com/1uphealth/1upwebapp">git repo</a>.
+            You can sign in, connect your health systems, and view and donate your medical
+            record. Learn more about ABCD{' '}
+            <a href="https://abcd-study.ucsd.edu">here</a>. This application uses the 1UpHealth API for data transfers.
+            Data is therefore cached on servers of 1UpHealth before it is shared with the ABCD study.
           </p>
         </div>
       </div>

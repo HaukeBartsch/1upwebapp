@@ -36,7 +36,7 @@ export default class Dashboard extends React.Component {
           'oneup_access_token',
           this.props.user.oneup_access_token,
         );
-      } catch (err) {}
+      } catch (err) { }
     } else {
       window.localStorage.remove('email');
       window.localStorage.remove('oneup_access_token');
@@ -50,55 +50,60 @@ export default class Dashboard extends React.Component {
         <div className="container">
           <br />
           <h1>Your medical dashboard </h1>
+          <p>Review your data and agree below to share this data with ABCD.</p>
           <br />
           <div>
             {typeof this.props.dashboard.resources.Patient !== 'undefined' &&
-            this.props.dashboard.resources.Patient.entry.length > 0 ? (
-              ''
-            ) : (
-              <div>
-                <br />
-                <br />
-                <br />
+              this.props.dashboard.resources.Patient.entry.length > 0 ? (
+                ''
+              ) : (
+                <div>
+                  <br />
+                  <br />
+                  <br />
                 Looks like you have no patient data
-                <br />
-                <Link>
-                  <a href="/">Connect some health systems</a>
-                </Link>
-              </div>
-            )}
+                  <br />
+                  <Link>
+                    <a href="/">Connect some health systems</a>
+                  </Link>
+                </div>
+              )}
           </div>
           <div style={{ textAlign: 'left' }}>
             {resourcesListToDisplayInOrder.map(
-              function(resourceType) {
+              function (resourceType) {
                 return (
                   <div>
                     {typeof this.props.dashboard.resources[resourceType] !=
                       'undefined' &&
-                    this.props.dashboard.resources[resourceType].entry.length >
+                      this.props.dashboard.resources[resourceType].entry.length >
                       0 ? (
-                      <h1>{resourceType}</h1>
-                    ) : (
-                      ''
-                    )}
+                        <h1>{resourceType}</h1>
+                      ) : (
+                        ''
+                      )}
                     {typeof this.props.dashboard.resources[resourceType] !=
-                    'undefined'
+                      'undefined'
                       ? this.props.dashboard.resources[resourceType].entry.map(
-                          function(resourceContainer) {
-                            return (
-                              <FhirResource
-                                fhirResource={resourceContainer.resource}
-                                fhirVersion={resourceContainer.fhirVersion}
-                              />
-                            );
-                          },
-                        )
+                        function (resourceContainer) {
+                          return (
+                            <FhirResource
+                              fhirResource={resourceContainer.resource}
+                              fhirVersion={resourceContainer.fhirVersion}
+                            />
+                          );
+                        },
+                      )
                       : ''}
                     <br />
                   </div>
                 );
               }.bind(this),
             )}
+          </div>
+          <div>
+            <button class="btn btn-primary" id="ShareWithABCD">Share this data with ABCD</button>
+            <div class="spacer"></div>
           </div>
         </div>
       </Layout>
