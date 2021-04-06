@@ -74,6 +74,7 @@ export default class Dashboard extends React.Component {
     return toReturn;
   }
 
+  // we can do several downloads if we timeout in between to give the browser a chance to catch up
   downloadAll(files){
     if (files.length == 0) 
        return;
@@ -84,14 +85,49 @@ export default class Dashboard extends React.Component {
     this.documentLink.body.appendChild(a);
     a.click();
     this.documentLink.body.removeChild(a);
+    // we need the current this in the next call as well
     setTimeout( function() { this.downloadAll(files); }.bind(this), 10);
   }
 
   convertToCSV(e) {
-    console.log(JSON.stringify(this.props));
+    //console.log(JSON.stringify(this.props));
     if (typeof this.props.dashboard !== 'undefined') {
       var res = this.props.dashboard.resources;
       var resNames = Object.keys(this.props.dashboard.resources);
+      // TODO: what if we have more than one patient here? Like a entry[0] and an entry[1]?
+
+      // try to find some general descriptors from the Patient resource
+      var patient = { lastname: "", given0: "", given1: "" };
+      if (typeof this.props.dashboard.resources["Patient"] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0] !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].family !== 'undefined') {
+          patient.lastname = this.props.dashboard.resources["Patient"].entry[0].resource.name[0].family;
+      }
+      if (typeof this.props.dashboard.resources["Patient"] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0] !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given[0] !== 'undefined') {
+          patient.given0 = this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given[0];
+      }
+      if (typeof this.props.dashboard.resources["Patient"] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0] !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given[1] !== 'undefined') {
+          patient.given1 = this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given[1];
+      }
+
       // for each resource (Patient, ...) we can create one CSV file (array of arrays)
       var allData = [];
       for (var i = 0; i < resNames.length; i++) {
@@ -108,18 +144,10 @@ export default class Dashboard extends React.Component {
         console.log(JSON.stringify(arrayRepresentation));
         var txtAsCsv = arrayRepresentation.map(function(a) { return a.map(function(a) { return JSON.stringify(a); }).join(","); }).join("\r\n");
         var file_path = "data:application/csv;charset=utf-8," + encodeURI(txtAsCsv);
-        allData.push([ resNames[i] + ".csv", file_path]);
-        /*
-        var a = this.documentLink.createElement("A");
-        a.href = file_path; // "/exported_" + resNames[i] + "/" + resNames[i] + ".csv";
-        a.download = resNames[i] + ".csv";
-        this.documentLink.body.appendChild(a);
-        a.click();
-        this.documentLink.body.removeChild(a);
-        */
+        allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".csv", file_path]);
       }
       this.downloadAll(allData);
-      console.log(JSON.stringify(res));  // we are in react.. but it works if we place a breakpoint in the browser
+      //console.log(JSON.stringify(res));  // we are in react.. but it works if we place a breakpoint in the browser
     }
   }
 
@@ -130,7 +158,7 @@ export default class Dashboard extends React.Component {
         <div className="container">
           <br />
           <h1>Your medical information </h1>
-          <p>Review your data and agree below to share with ABCD. You may review the content of the shared data as a spreadsheet (Review data as CSV).</p>
+          <p>You have a chance to review your data now. Agree below to share with ABCD.</p>
           <br />
           <div>
             {typeof this.props.dashboard.resources.Patient !== 'undefined' &&
