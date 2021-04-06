@@ -153,7 +153,7 @@ export default class Dashboard extends React.Component {
     a.click();
     this.documentLink.body.removeChild(a);
     // we need the current this in the next call as well
-    setTimeout( function() { this.downloadAll(files); }.bind(this), 10);
+    setTimeout( function() { this.downloadAll(files); }.bind(this), 500);
   }
 
   convertToCSV(e) {
@@ -199,13 +199,13 @@ export default class Dashboard extends React.Component {
       var allData = [];
       for (var i = 0; i < resNames.length; i++) {
         var o = this.props.dashboard.resources[resNames[i]];
-        var file_path = "data:application/text;charset=utf-8," + encodeURI(JSON.stringify(this.props.dashboard.resources[resNames[i]]));
-        //allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".csv", file_path]);
-        allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".json", file_path]);  
-
         if (this.props.dashboard.resources[resNames[i]].entry.length == 0) {
           continue;
         }
+        var file_path = "data:application/text;charset=utf-8," + encodeURI(JSON.stringify(this.props.dashboard.resources[resNames[i]]));
+        //allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".csv", file_path]);
+        allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".json", file_path]);
+
         // now flatten the structure
         var out = this.flattenObject(o);
         out = Object.assign({"user_email": this.props.user.email}, out);
