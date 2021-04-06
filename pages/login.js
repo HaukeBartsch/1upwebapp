@@ -41,10 +41,10 @@ export default class Login extends React.Component {
             Welcome to the <a href="https://localhost:3000">ABCD Donate Your Data</a> Demo App.
           </h1>
           <p>
-            You can sign in, connect your health systems, and view and donate your medical
+            This service is for ABCD participants only. You can sign in, connect your health systems, and view and donate your medical
             record. Learn more about ABCD{' '}
             <a href="https://abcd-study.ucsd.edu">here</a>. This application uses the 1UpHealth API for data transfers.
-            Data is therefore cached on servers of 1UpHealth before it is shared with the ABCD study.
+            Data is cached on servers of 1UpHealth before the user decides to shared with the ABCD study.
           </p>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default class Login extends React.Component {
               <div className="container  text-center">
                 <h1>
                   Check your email. <br />
-                  We sent a magic link to log into your account :)
+                  We sent a magic link to log into your account. By showing that you have access to this email address we will verify that its you who shares data with ABCD.
                 </h1>
               </div>
             </div>

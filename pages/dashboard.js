@@ -43,6 +43,15 @@ export default class Dashboard extends React.Component {
     }
   }
 
+  shareWithABCD() {
+
+  }
+
+  convertToCSV() {
+    var res = this.props.dashboard.resources;
+    console.log(JSON.stringify(res));  // are we on the server or are we on the client?
+  }
+
   render() {
     return (
       <Layout>
@@ -50,7 +59,7 @@ export default class Dashboard extends React.Component {
         <div className="container">
           <br />
           <h1>Your medical dashboard </h1>
-          <p>Review your data and agree below to share this data with ABCD.</p>
+          <p>Review your data and agree below to share with ABCD or just download as a spreadsheet.</p>
           <br />
           <div>
             {typeof this.props.dashboard.resources.Patient !== 'undefined' &&
@@ -64,7 +73,7 @@ export default class Dashboard extends React.Component {
                 Looks like you have no patient data
                   <br />
                   <Link>
-                    <a href="/">Connect some health systems</a>
+                    <a href="/">Connect some health systems (requires your email and password with the provider)</a>
                   </Link>
                 </div>
               )}
@@ -102,8 +111,10 @@ export default class Dashboard extends React.Component {
             )}
           </div>
           <div>
-            <button class="btn btn-primary" id="ShareWithABCD">Share this data with ABCD</button>
-            <div class="spacer"></div>
+          <button class="btn btn-primary" id="ShareWithABCD" onClick={this.shareWithABCD}>Share this data with ABCD</button>
+          <button class="btn btn-primary" id="ExportAsCSV" onClick={this.convertToCSV}>Download data as CSV</button>
+          <div class="spacer"></div>
+          <div class="spacer"></div>
           </div>
         </div>
       </Layout>
