@@ -63,9 +63,9 @@ export default class Login extends React.Component {
               {this.welcomeText()}
               <div className="container  text-center">
                 <h1>
-                  Check your email. <br />
-                  We sent a magic link to log into your account. By showing that you have access to this email address we will verify that its you who shares data with ABCD.
+                  Check your email.
                 </h1>
+                <p>We sent a magic link to log into your account. By showing that you have access to this email address we will verify that its you who shares data with ABCD.</p>
               </div>
             </div>
           </div>

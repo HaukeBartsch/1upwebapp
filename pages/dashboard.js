@@ -101,6 +101,7 @@ export default class Dashboard extends React.Component {
         }
         // now flatten the structure
         var out = this.flattenObject(o);
+        out = Object.assign({"user_email": this.props.user.email}, out);
         // we can convert this flat object into an array of arrays (CSV)
         var arrayRepresentation = new Array( Object.keys(out) );
         arrayRepresentation.push(Object.values(out));
@@ -131,12 +132,10 @@ export default class Dashboard extends React.Component {
           <h1>Your medical information </h1>
           <p>Review your data and agree below to share with ABCD. You may review the content of the shared data as a spreadsheet (Review data as CSV).</p>
           <br />
-          <button class="btn btn-primary" id="ExportAsCSV" onClick={this.convertToCSV} title="Will download individual spreadsheets for all resources. Check with their file-size to find out if sufficient data was collected.">Review data as CSV</button>
-          <br />
           <div>
             {typeof this.props.dashboard.resources.Patient !== 'undefined' &&
               this.props.dashboard.resources.Patient.entry.length > 0 ? (
-                ''
+                <button class="btn btn-primary" id="ExportAsCSV" onClick={this.convertToCSV} title="Will download individual spreadsheets for all resources. Check with their file-size to find out if sufficient data was collected.">Review data as CSV</button>
               ) : (
                 <div>
                   <br />
@@ -150,7 +149,7 @@ export default class Dashboard extends React.Component {
                 </div>
               )}
           </div>
-          <div style={{ textAlign: 'left', height: '600px', "overflow-y": 'scroll', "background": "#EEE", "margin-top": "10px", "margin-bottom": "10px" }}>
+          <div style={{ textAlign: 'left', height: '600px', "overflow-y": 'scroll', "background": "#EEE", "margin-top": "10px", "margin-bottom": "10px", padding: "5px" }}>
             {resourcesListToDisplayInOrder.map(
               function (resourceType) {
                 return (
@@ -183,7 +182,11 @@ export default class Dashboard extends React.Component {
             )}
           </div>
           <div>
-          <button class="btn btn-primary" id="ShareWithABCD" onClick={this.shareWithABCD} title="Currently this function is not available as it needs a proper integration into the ABCD study data infrastructure." disabled>Share this data with ABCD</button>&nbsp;
+          { typeof this.props.dashboard.resources.Patient !== 'undefined' &&
+              this.props.dashboard.resources.Patient.entry.length > 0 ?
+          <button class="btn btn-primary" id="ShareWithABCD" onClick={this.shareWithABCD} title="Currently this function is not available as it needs a proper integration into the ABCD study data infrastructure." disabled>Share this data with ABCD</button>
+          : ''
+          }
           <div class="spacer"></div>
           <div class="spacer"></div>
           </div>

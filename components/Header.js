@@ -69,11 +69,11 @@ export default class Header extends React.Component {
                     </a>
                   </li>
                 )}
-              <li className="nav-item">
+              {0?<li className="nav-item">
                 <a className="nav-link" href="">
                   <Link href="/test">Test Data</Link>&nbsp;{' '}
                 </a>
-              </li>
+              </li>:""}
             </ul>
           </div>
         </nav>
