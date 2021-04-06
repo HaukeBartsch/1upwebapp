@@ -5,6 +5,7 @@ import { authenticate } from '../utils';
 import Header from '../components/Header.js';
 import Layout from '../components/layouts/Layout';
 import { FhirResource } from 'fhir-react';
+
 const {
   displayInOrder: resourcesListToDisplayInOrder,
 } = require('../resourcesConfig');
@@ -13,6 +14,7 @@ export default class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.convertToCSV = this.convertToCSV.bind(this);
+    this.shareWithABCD = this.shareWithABCD.bind(this);
   }
 
 
@@ -50,8 +52,73 @@ export default class Dashboard extends React.Component {
     this.documentLink = document;
   }
 
-  shareWithABCD() {
+  // we can do several downloads if we timeout in between to give the browser a chance to catch up
+  saveAll(files) {
+    /*var output_folder = "output/";
+    for (i in files) {
+      
+    }*/
+  }
 
+  shareWithABCD() {
+    if (typeof this.props.dashboard !== 'undefined') {
+      var res = this.props.dashboard.resources;
+      var resNames = Object.keys(this.props.dashboard.resources);
+      // TODO: what if we have more than one patient here? Like a entry[0] and an entry[1]?
+
+      // try to find some general descriptors from the Patient resource
+      var patient = { lastname: "", given0: "", given1: "" };
+      if (typeof this.props.dashboard.resources["Patient"] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0] !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].family !== 'undefined') {
+          patient.lastname = this.props.dashboard.resources["Patient"].entry[0].resource.name[0].family;
+      }
+      if (typeof this.props.dashboard.resources["Patient"] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0] !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given[0] !== 'undefined') {
+          patient.given0 = this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given[0];
+      }
+      if (typeof this.props.dashboard.resources["Patient"] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0] !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0] !== 'undefined' && 
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given !== 'undefined' &&
+          typeof this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given[1] !== 'undefined') {
+          patient.given1 = this.props.dashboard.resources["Patient"].entry[0].resource.name[0].given[1];
+      }
+
+      // for each resource (Patient, ...) we can create one CSV file (array of arrays)
+      var allData = [];
+      for (var i = 0; i < resNames.length; i++) {
+        var o = this.props.dashboard.resources[resNames[i]];
+        if (this.props.dashboard.resources[resNames[i]].entry.length == 0) {
+          continue;
+        }
+        // now flatten the structure
+        var out = this.flattenObject(o);
+        out = Object.assign({"user_email": this.props.user.email}, out);
+        // we can convert this flat object into an array of arrays (CSV)
+        var arrayRepresentation = new Array( Object.keys(out) );
+        arrayRepresentation.push(Object.values(out));
+        console.log(JSON.stringify(arrayRepresentation));
+        var txtAsCsv = arrayRepresentation.map(function(a) { return a.map(function(a) { return JSON.stringify(a); }).join(","); }).join("\r\n");
+        var file_path = "data:application/csv;charset=utf-8," + encodeURI(txtAsCsv);
+        allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".csv", file_path]);
+      }
+      this.saveAll(allData);
+      //console.log(JSON.stringify(res));  // we are in react.. but it works if we place a breakpoint in the browser
+    }
   }
 
   flattenObject(ob) {
@@ -132,6 +199,10 @@ export default class Dashboard extends React.Component {
       var allData = [];
       for (var i = 0; i < resNames.length; i++) {
         var o = this.props.dashboard.resources[resNames[i]];
+        var file_path = "data:application/text;charset=utf-8," + encodeURI(JSON.stringify(this.props.dashboard.resources[resNames[i]]));
+        //allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".csv", file_path]);
+        allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".json", file_path]);  
+
         if (this.props.dashboard.resources[resNames[i]].entry.length == 0) {
           continue;
         }
@@ -143,9 +214,10 @@ export default class Dashboard extends React.Component {
         arrayRepresentation.push(Object.values(out));
         console.log(JSON.stringify(arrayRepresentation));
         var txtAsCsv = arrayRepresentation.map(function(a) { return a.map(function(a) { return JSON.stringify(a); }).join(","); }).join("\r\n");
-        var file_path = "data:application/csv;charset=utf-8," + encodeURI(txtAsCsv);
+        file_path = "data:application/csv;charset=utf-8," + encodeURI(txtAsCsv);
         allData.push([ this.props.user.email.replace("@", "__") + "_" + patient.lastname + "_" + patient.given0 + "_" + patient.given1 + "_" + resNames[i] + ".csv", file_path]);
       }
+
       this.downloadAll(allData);
       //console.log(JSON.stringify(res));  // we are in react.. but it works if we place a breakpoint in the browser
     }
@@ -163,7 +235,7 @@ export default class Dashboard extends React.Component {
           <div>
             {typeof this.props.dashboard.resources.Patient !== 'undefined' &&
               this.props.dashboard.resources.Patient.entry.length > 0 ? (
-                <button class="btn btn-primary" id="ExportAsCSV" onClick={this.convertToCSV} title="Will download individual spreadsheets for all resources. Check with their file-size to find out if sufficient data was collected.">Review data as CSV</button>
+                <button class="btn btn-primary" id="ExportAsCSV" onClick={this.convertToCSV} title="Will download individual spreadsheets for all resources. Check with their file-size to find out if sufficient data was collected.">Review data as CSV/JSON</button>
               ) : (
                 <div>
                   <br />
